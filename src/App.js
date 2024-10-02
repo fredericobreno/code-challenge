@@ -1,23 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from 'react';
+import { PaymentTransactionsTable, DateFilter } from './components'
+import { PaymentService } from './services/api'
 
 function App() {
+  const [dateFilter, setDateFilter] = useState({
+    from: null,
+    to: null
+  })
+  const [paymentTransactions, setPaymentTransactions] = useState([])
+
+  useEffect(() => {
+    (async () => {
+      const data = await PaymentService.getTransactions({ dateFilter })
+
+      setPaymentTransactions(data)
+    })()
+  }, [dateFilter])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{
+      height: '100vh',
+      display: 'flex',
+      gap: '8px',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }}>
+      <h1>Payment Transactions</h1>
+      <DateFilter setDateFilter={setDateFilter} />
+      <PaymentTransactionsTable paymentTransactions={paymentTransactions} />
     </div>
   );
 }
